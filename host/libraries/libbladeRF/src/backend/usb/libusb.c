@@ -25,7 +25,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <libusb.h>
-#if 1 == BLADERF_OS_FREEBSD  
+#if 1 == BLADERF_OS_FREEBSD
 #include <limits.h>
 #endif // BLADERF_OS_FREEBSD
 
@@ -1048,6 +1048,19 @@ static void LIBUSB_CALL lusb_stream_cb(struct libusb_transfer *transfer)
         stream_data->transfer_status[transfer_i] = TRANSFER_AVAIL;
         stream_data->num_avail++;
         pthread_cond_signal(&stream->can_submit_buffer);
+    }
+
+    /* Mats: Insert an error at random intervals */
+    #include <sys/time.h>
+    struct timeval start;
+    double secs = 0;
+    gettimeofday(&start, NULL);
+    secs = start.tv_usec;
+    srand((unsigned) secs);
+    int r = rand() % 100000;
+    if (r < 60) {
+            printf("Error injected!\n");
+            transfer->status = LIBUSB_TRANSFER_TIMED_OUT;
     }
 
     /* Check to see if the transfer has been cancelled or errored */

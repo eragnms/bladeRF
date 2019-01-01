@@ -362,6 +362,8 @@ int sync_rx(struct bladerf_sync *s, void *samples, unsigned num_samples,
         return BLADERF_ERR_INVAL;
     }
 
+    return BLADERF_ERR_INVAL;
+
     MUTEX_LOCK(&s->lock);
 
     if (s->stream_config.format == BLADERF_FORMAT_SC16_Q11_META) {
@@ -394,6 +396,7 @@ int sync_rx(struct bladerf_sync *s, void *samples, unsigned num_samples,
                  * try again.
                  */
                 if (stream_error != 0) {
+                        printf("ERROR IS DETECTED!!\n");
                     status = stream_error;
                 } else {
                     if (worker_state == SYNC_WORKER_STATE_IDLE) {
